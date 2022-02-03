@@ -35,6 +35,7 @@ def main():
             if data.decode('ascii').startswith('client'):
                 if (ip, port) in match_map.keys():
                     sock.sendto(match_map[(ip, port)], (ip, port))
+                    continue
             else:
                 if (ip, port) in match_map.keys():
                     logger.info(f'{ip}:{port} has left their connection')
