@@ -42,6 +42,7 @@ def main():
                 match_map.pop((ip, port))
                 logger.info(f'removing map entry for partner: {partner_ip}:{partner_port}')
                 match_map.pop((partner_ip, partner_port))
+                sock.sendto(f'you have left the session'.encode('ascii'), (ip, port))
 
             logger.info(f"received message: {data.decode('ascii')}, {ip}:{port}")
             response = 'none yet'
