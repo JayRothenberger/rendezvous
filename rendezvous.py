@@ -6,6 +6,7 @@ from time import perf_counter as time
 logger.basicConfig(level=logger.INFO)
 peers_to_match = set()
 
+
 # returns pairs of distinct elements in iterable that can be casted to list 'distinct' as a set of tuples
 def pairs(distinct):
     rax = set()
@@ -14,6 +15,7 @@ def pairs(distinct):
         for ind in range(0, len(distinct), 2):
             rax.add((distinct[ind], distinct[ind + 1]))
     return rax
+
 
 # main function that opens the udp socket server on port 6969
 def main():
@@ -52,14 +54,18 @@ def main():
         matches = pairs(peers_to_match)
         if matches:
             for client, server in matches:
-                resp_client = f"client:{client[0]}:{client[1]}".encode('ascii')
-                sock.sendto(resp_client, client)
-                resp_server = f"server:{server[0]}:{server[1]}".encode('ascii')
-                sock.sendto(resp_server, server)
+                resp_client = f"client:{server[0]}:{server[1]}".encode('ascii')
+                resp_server = f"server:{client[0]}:{client[1]}".encode('ascii')
+
                 peers_to_match.remove(client)
                 peers_to_match.remove(server)
+
                 match_map[client] = resp_client
                 match_map[server] = resp_server
+
+                sock.sendto(resp_client, client)
+                sock.sendto(resp_server, server)
+
                 logger.info(f'connected: {client}, {server}')
         for peer in peers_to_match:
             sock.sendto('none yet'.encode('ascii'), peer)
