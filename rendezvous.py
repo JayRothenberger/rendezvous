@@ -33,6 +33,7 @@ def main():
             response = 'none yet'
             sock.sendto(response.encode('ascii'), (ip, udp_port))
             logger.info(f"sending message: {response} to {ip}:{port}")
+            peers_to_match.add((ip, int(port)))
         except OSError as e:
             pass
             # logger.info(f'{str(e)}, uptime: {time() - start}')
