@@ -2,19 +2,20 @@ import socket
 import logging as logger
 from time import sleep
 from time import perf_counter as time
-
+# logger with level info to print to console
 logger.basicConfig(level=logger.INFO)
 peers_to_match = set()
 
-
+# returns pairs of distinct elements in iterable that can be casted to list 'distinct' as a set of tuples
 def pairs(distinct):
     rax = set()
     distinct = list(distinct)
-    for ind in range(0, len(distinct), 2):
-        rax.add((distinct[ind], distinct[ind+1]))
+    if len(distinct) > 1:
+        for ind in range(0, len(distinct), 2):
+            rax.add((distinct[ind], distinct[ind + 1]))
     return rax
 
-
+# main function that opens the udp socket server on port 6969
 def main():
     start = time()
     udp_ip = ''
@@ -34,19 +35,21 @@ def main():
             logger.info(f"sending message: {response} to {ip}:{port}")
         except OSError as e:
             pass
-            #logger.info(f'{str(e)}, uptime: {time() - start}')
+            # logger.info(f'{str(e)}, uptime: {time() - start}')
         matches = pairs(peers_to_match)
-        for client, server in matches:
-            resp_client = f"client:{client[0]}:{client[1]}".encode('ascii')
-            sock.sendto(resp_client, client)
-            resp_server = f"server:{server[0]}:{server[1]}".encode('ascii')
-            sock.sendto(resp_server, server)
-            peers_to_match.remove(client)
-            peers_to_match.remove(server)
-            logger.info(f'connected: {client}, {server}')
+        if matches:
+            for client, server in matches:
+                resp_client = f"client:{client[0]}:{client[1]}".encode('ascii')
+                sock.sendto(resp_client, client)
+                resp_server = f"server:{server[0]}:{server[1]}".encode('ascii')
+                sock.sendto(resp_server, server)
+                peers_to_match.remove(client)
+                peers_to_match.remove(server)
+                logger.info(f'connected: {client}, {server}')
         for peer in peers_to_match:
             sock.sendto('none yet'.encode('ascii'), peer)
             logger.info(f'sending wait message: {peer[0]}:{peer[1]}')
 
+
 if __name__ == "__main__":
-	main()
+    main()
