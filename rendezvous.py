@@ -18,6 +18,7 @@ def pairs(distinct):
 # main function that opens the udp socket server on port 6969
 def main():
     start = time()
+    match_map = dict()
     udp_ip = ''
     udp_port = 6969
 
@@ -29,9 +30,15 @@ def main():
     while True:
         try:
             data, (ip, port) = sock.recvfrom(1500)  # buffer size is 1500 bytes
+            if data.decode('ascii').startswith('client'):
+                if (ip, port) in match_map.keys():
+                    sock.sendto(match_map[(ip, port)], (ip, port))
+            else:
+                match_map.pop((ip, port))
+
             logger.info(f"received message: {data.decode('ascii')}, {ip}:{port}")
             response = 'none yet'
-            sock.sendto(response.encode('ascii'), (ip, udp_port))
+            sock.sendto(response.encode('ascii'), (ip, port))
             logger.info(f"sending message: {response} to {ip}:{port}")
             peers_to_match.add((ip, int(port)))
         except OSError as e:
@@ -46,6 +53,8 @@ def main():
                 sock.sendto(resp_server, server)
                 peers_to_match.remove(client)
                 peers_to_match.remove(server)
+                match_map[client] = resp_client
+                match_map[server] = resp_server
                 logger.info(f'connected: {client}, {server}')
         for peer in peers_to_match:
             sock.sendto('none yet'.encode('ascii'), peer)
