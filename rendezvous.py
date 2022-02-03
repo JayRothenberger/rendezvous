@@ -36,13 +36,14 @@ def main():
                 if (ip, port) in match_map.keys():
                     sock.sendto(match_map[(ip, port)], (ip, port))
             else:
-                logger.info(f'{ip}:{port} has left their connection')
-                partner_ip = match_map[(ip, port)].decode('ascii').split(':')[1]
-                partner_port = int(match_map[(ip, port)].decode('ascii').split(':')[2])
-                match_map.pop((ip, port))
-                logger.info(f'removing map entry for partner: {partner_ip}:{partner_port}')
-                match_map.pop((partner_ip, partner_port))
-                sock.sendto(f'you have left the session'.encode('ascii'), (ip, port))
+                if (ip, port) in match_map.keys():
+                    logger.info(f'{ip}:{port} has left their connection')
+                    partner_ip = match_map[(ip, port)].decode('ascii').split(':')[1]
+                    partner_port = int(match_map[(ip, port)].decode('ascii').split(':')[2])
+                    match_map.pop((ip, port))
+                    logger.info(f'removing map entry for partner: {partner_ip}:{partner_port}')
+                    match_map.pop((partner_ip, partner_port))
+                    sock.sendto(f'you have left the session'.encode('ascii'), (ip, port))
                 continue
             logger.info(f"received message: {data.decode('ascii')}, {ip}:{port}")
             response = 'none yet'
