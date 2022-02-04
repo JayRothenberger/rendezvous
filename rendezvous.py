@@ -46,19 +46,22 @@ def main():
                     match_map.pop((partner_ip, partner_port))
                     sock.sendto(f'you have left the session'.encode('ascii'), (ip, port))
                 continue
-            logger.info(f"received message: {data.decode('ascii')}, {ip}:{port}")
+            d_string = data.decode('ascii')
+            m, m_port = tuple(d_string.split(':'))
+            logger.info(f"received message: '{data.decode('ascii')}', {ip}:{port}")
             response = 'none yet'
             sock.sendto(response.encode('ascii'), (ip, port))
+
             logger.info(f"sending message: {response} to {ip}:{port}")
-            peers_to_match.add((ip, int(port)))
+            peers_to_match.add((ip, int(port), int(m_port)))
         except OSError as e:
             pass
             # logger.info(f'{str(e)}, uptime: {time() - start}')
         matches = pairs(peers_to_match)
         if matches:
             for client, server in matches:
-                resp_client = f"client:{server[0]}:{server[1]}".encode('ascii')
-                resp_server = f"server:{client[0]}:{client[1]}".encode('ascii')
+                resp_client = f"client:{server[0]}:{server[1]}:{server[2]}".encode('ascii')
+                resp_server = f"server:{client[0]}:{client[1]}:{client[2]}".encode('ascii')
 
                 peers_to_match.remove(client)
                 peers_to_match.remove(server)
