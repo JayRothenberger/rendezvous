@@ -69,8 +69,8 @@ def main():
                 match_map[client] = resp_client
                 match_map[server] = resp_server
 
-                sock.sendto(resp_client, client)
-                sock.sendto(resp_server, server)
+                sock.sendto(resp_client, (client[0], client[1]))
+                sock.sendto(resp_server, (server[0], server[1]))
 
                 logger.info(f'connected: {client}, {server}')
         for peer_ip, peer_port, peer_private in peers_to_match:
