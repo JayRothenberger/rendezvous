@@ -73,9 +73,9 @@ def main():
                 sock.sendto(resp_server, server)
 
                 logger.info(f'connected: {client}, {server}')
-        for peer in peers_to_match:
-            sock.sendto('none yet'.encode('ascii'), peer)
-            logger.info(f'sending wait message: {peer[0]}:{peer[1]}')
+        for peer_ip, peer_port, peer_private in peers_to_match:
+            sock.sendto('none yet'.encode('ascii'), (peer_ip, peer_port))
+            logger.info(f'sending wait message: {peer_ip[0]}:{peer_port[1]}')
 
 
 if __name__ == "__main__":
