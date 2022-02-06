@@ -32,6 +32,7 @@ def greet_peer():
     send(f'greetings, {role}', peer_ip, peer_private)
     return sock.recvfrom(1500)
 
+
 sock.settimeout(5)
 
 while True:

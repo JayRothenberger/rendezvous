@@ -29,6 +29,7 @@ def main():
     sock.bind((udp_ip, udp_port))
     sock.settimeout(5)
     logger.info(f'listening on port: {udp_port}')
+    
     while True:
         try:
             data, (ip, port) = sock.recvfrom(1500)  # buffer size is 1500 bytes
